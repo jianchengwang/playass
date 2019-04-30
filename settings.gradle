@@ -1,0 +1,3 @@
+rootProject.name = 'playass'
+include 'playass-core'
+include 'playass-example'

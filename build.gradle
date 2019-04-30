@@ -1,0 +1,30 @@
+allprojects {
+
+    apply plugin: 'java'
+
+    sourceCompatibility = 1.8
+    sourceCompatibility = 1.8
+}
+
+subprojects {
+
+    repositories {
+        mavenLocal()
+        maven {
+            name "aliyunmaven"
+            url "http://maven.aliyun.com/nexus/content/groups/public/"
+        }
+        mavenCentral()
+    }
+
+
+    def lombokVersion = '1.18.6'
+    dependencies {
+
+        annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+        implementation("org.projectlombok:lombok:$lombokVersion")
+
+        testImplementation group: 'junit', name: 'junit', version: '4.12'
+    }
+
+}
