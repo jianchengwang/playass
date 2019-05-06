@@ -1,4 +1,6 @@
-package cn.jianchengwang.playass.core.annotation;
+package cn.jianchengwang.playass.core.mvc.annotation.action;
+
+import cn.jianchengwang.playass.core.mvc.context.H;
 
 import java.lang.annotation.*;
 
@@ -8,5 +10,6 @@ import java.lang.annotation.*;
 @Inherited
 public @interface Action {
     String value() default "";
-    String method() default "GET";
+
+    H.Method[] method() default {H.Method.ALL};
 }

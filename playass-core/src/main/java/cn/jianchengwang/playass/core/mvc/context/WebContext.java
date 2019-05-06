@@ -1,7 +1,7 @@
-package cn.jianchengwang.playass.core.context;
+package cn.jianchengwang.playass.core.mvc.context;
 
-import cn.jianchengwang.playass.core.context.wrapper.Rp;
-import cn.jianchengwang.playass.core.context.wrapper.Rq;
+import cn.jianchengwang.playass.core.mvc.context.wrapper.Rp;
+import cn.jianchengwang.playass.core.mvc.context.wrapper.Rq;
 import lombok.Data;
 
 @Data

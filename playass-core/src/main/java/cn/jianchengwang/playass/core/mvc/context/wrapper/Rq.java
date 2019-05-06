@@ -1,7 +1,7 @@
-package cn.jianchengwang.playass.core.context.wrapper;
+package cn.jianchengwang.playass.core.mvc.context.wrapper;
 
-import cn.jianchengwang.playass.core.context.param.IParam;
-import cn.jianchengwang.playass.core.context.param.ParamMap;
+import cn.jianchengwang.playass.core.mvc.context.param.IParam;
+import cn.jianchengwang.playass.core.mvc.context.param.ParamMap;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.QueryStringDecoder;

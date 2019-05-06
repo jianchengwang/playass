@@ -1,7 +1,7 @@
 package cn.jianchengwang.playass.core;
 
 
-import cn.jianchengwang.playass.core.route.Route;
+import cn.jianchengwang.playass.core.mvc.route.Route;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.LinkedHashMap;

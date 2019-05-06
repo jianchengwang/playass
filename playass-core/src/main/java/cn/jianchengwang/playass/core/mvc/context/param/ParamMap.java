@@ -1,4 +1,4 @@
-package cn.jianchengwang.playass.core.context.param;
+package cn.jianchengwang.playass.core.mvc.context.param;
 
 import java.util.HashMap;
 

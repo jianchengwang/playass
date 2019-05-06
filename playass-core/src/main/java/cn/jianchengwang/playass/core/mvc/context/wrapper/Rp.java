@@ -1,4 +1,4 @@
-package cn.jianchengwang.playass.core.context.wrapper;
+package cn.jianchengwang.playass.core.mvc.context.wrapper;
 
 import cn.jianchengwang.playass.core.Const;
 import io.netty.buffer.Unpooled;
