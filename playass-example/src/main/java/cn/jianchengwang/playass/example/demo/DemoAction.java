@@ -1,23 +1,21 @@
 package cn.jianchengwang.playass.example.demo;
 
 
-import cn.jianchengwang.playass.core.mvc.action.IWorkAction;
+import cn.jianchengwang.playass.core.mvc.annotation.Path;
 import cn.jianchengwang.playass.core.mvc.annotation.action.Action;
 import cn.jianchengwang.playass.core.mvc.context.WebContext;
 import cn.jianchengwang.playass.core.mvc.context.wrapper.Rq;
 
-@Action("demo")
-public class DemoAction implements IWorkAction {
+@Path("demo")
+public class DemoAction {
 
-    @Override
-    public void execute(WebContext context) throws Exception {
+    @Action
+    public void test(String name, Integer age) throws Exception {
 
         System.out.println("demo action execute .....");
 
-        Rq rq = context.getRq();
+        Rq rq = WebContext.me().getRq();
 
-        String name = rq.getString("name");
-        Integer age = rq.getInteger("age");
         User user = new User(name, age);
 
         System.out.println("name: " + user.getName());
@@ -27,5 +25,12 @@ public class DemoAction implements IWorkAction {
 
         System.out.println("demo action execute done .....");
 
+    }
+
+    @Action("test/{id}")
+    public void testPath(Integer id) throws Exception {
+        System.out.println("demo action testPath execute .....");
+        WebContext.me().getRp().json(new User(id));
+        System.out.println("demo action testPath execute done .....");
     }
 }

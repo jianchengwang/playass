@@ -1,52 +1,26 @@
 package cn.jianchengwang.playass.core.mvc.route;
 
-import cn.jianchengwang.playass.core.kit.PlaceHolderKit;
-import cn.jianchengwang.playass.core.kit.StrKit;
-import cn.jianchengwang.playass.core.mvc.annotation.Path;
-import lombok.Data;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import java.util.*;
-
-@Data
 public class Route {
 
-    private String uri;
+    public static final Map<String, RouteInfo> ROUTE_MAP = new LinkedHashMap<>();
 
-    private Path path;
-    private Class clazz;
-    private ActionConfig actionConfig;
+    public static final RouteNode ROUTE_ROOT = new RouteNode("/", 0);
 
-    private boolean havePathParam;
-    private Set<String> pathParams = new LinkedHashSet<>();
-
-    public Route() {
+    public static void build(String uri, RouteInfo routeInfo) {
+        ROUTE_ROOT.build(routeInfo.getUri(), routeInfo);
     }
 
-    public Route(Path path, Class clazz, ActionConfig actionConfig) {
-        this.path = path;
-        this.clazz = clazz;
-        this.actionConfig = actionConfig;
+    public static RouteInfo match(String uri) {
 
-        StringBuilder uriSb = new StringBuilder(path.value()).append("/");
-
-        if(actionConfig.getValue().length() > 0) {
-            uriSb.append(actionConfig.getValue());
+        if(ROUTE_MAP.containsKey(uri)) {
+            return ROUTE_MAP.get(uri);
         } else {
-            uriSb.append(StrKit.upperCase(actionConfig.getExecuteMethod().getName()));
+
+            return ROUTE_ROOT.match(uri);
+
         }
-
-        pathParams = PlaceHolderKit.findPlaceHolderKeys(uriSb.toString());
-        if(pathParams != null && pathParams.size() > 0) {
-            havePathParam = true;
-        }
-
-        uriSb.append(path.suffix());
-
-        this.uri = uriSb.toString();
-
-    }
-
-    public Route(String uri) {
-        this.uri = uri;
     }
 }

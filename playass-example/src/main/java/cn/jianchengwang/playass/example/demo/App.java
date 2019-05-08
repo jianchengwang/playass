@@ -9,7 +9,7 @@ public class App {
     public static void main(String[] args) throws Exception {
 
         new HttpServer(8989)
-                .boot(new InitBootstrap("cn.jianchengwang.todo.lib.netty.todo.web.demo"))
+                .boot(new InitBootstrap("cn.jianchengwang.playass.example.demo"))
                 .start();
     }
 }

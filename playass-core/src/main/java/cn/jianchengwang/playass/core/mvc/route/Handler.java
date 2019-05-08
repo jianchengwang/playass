@@ -6,13 +6,13 @@ import lombok.Data;
 import java.lang.reflect.Method;
 
 @Data
-public class ActionConfig {
+public class Handler {
     String value;
     H.Method[] allowHttpMethods;
 
     Method executeMethod;
 
-    public ActionConfig(String value, H.Method[] allowHttpMethods, Method executeMethod) {
+    public Handler(String value, H.Method[] allowHttpMethods, Method executeMethod) {
         this.value = value;
         this.allowHttpMethods = allowHttpMethods;
         this.executeMethod = executeMethod;

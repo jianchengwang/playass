@@ -1,7 +1,7 @@
 package cn.jianchengwang.playass.core;
 
 
-import cn.jianchengwang.playass.core.mvc.route.Route;
+import cn.jianchengwang.playass.core.mvc.route.RouteInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.LinkedHashMap;
@@ -19,9 +19,6 @@ public final class Const {
      * 当前版本号
      */
     public static final String MARIO_VERSION = "1.0.0";
-
-
-    public static final Map<String, Route> ROUTE_MAP = new LinkedHashMap<>();
 
     public static final ObjectMapper MAPPER = new ObjectMapper();
 

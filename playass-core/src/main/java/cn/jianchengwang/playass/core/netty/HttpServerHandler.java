@@ -1,11 +1,10 @@
 package cn.jianchengwang.playass.core.netty;
 
-import cn.jianchengwang.playass.core.Const;
-import cn.jianchengwang.playass.core.mvc.action.IWorkAction;
 import cn.jianchengwang.playass.core.mvc.context.WebContext;
 import cn.jianchengwang.playass.core.mvc.context.wrapper.Rp;
 import cn.jianchengwang.playass.core.mvc.context.wrapper.Rq;
 import cn.jianchengwang.playass.core.mvc.route.Route;
+import cn.jianchengwang.playass.core.mvc.route.RouteInfo;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -39,13 +38,17 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
                 uri = uri.substring(1, uri.length());
             }
 
-            if(Const.ROUTE_MAP.containsKey(uri)) {
+            RouteInfo routeInfo = Route.match(uri);
+            if(routeInfo != null) {
+                System.out.println("clazz:" + routeInfo.getClazz().getSimpleName());
+                System.out.println("handler method:" + routeInfo.getHandler().getExecuteMethod().getName());
+                System.out.println("pathParams:");
 
-                Route route = Const.ROUTE_MAP.get(uri);
+                routeInfo.getPathParamMap().forEach((k, v) -> {
+                    System.out.println(k + ":" + v);
+                });
 
-                IWorkAction workAction = route.getWorkAction().newInstance();
-                workAction.execute(WebContext.me());
-
+                routeInfo.getHandler().getExecuteMethod().invoke(routeInfo.getClazz().newInstance(), 1);
             } else {
                 WebContext.me().getRp().error("NOTFOUND");
             }
