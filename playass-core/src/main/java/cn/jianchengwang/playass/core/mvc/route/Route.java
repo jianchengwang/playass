@@ -1,11 +1,11 @@
 package cn.jianchengwang.playass.core.mvc.route;
 
+import cn.jianchengwang.playass.core.kit.PlaceHolderKit;
 import cn.jianchengwang.playass.core.kit.StrKit;
 import cn.jianchengwang.playass.core.mvc.annotation.Path;
 import lombok.Data;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Data
 public class Route {
@@ -16,7 +16,8 @@ public class Route {
     private Class clazz;
     private ActionConfig actionConfig;
 
-    private Map<String, String> pathParams = new HashMap<>(8);
+    private boolean havePathParam;
+    private Set<String> pathParams = new LinkedHashSet<>();
 
     public Route() {
     }
@@ -34,9 +35,14 @@ public class Route {
             uriSb.append(StrKit.upperCase(actionConfig.getExecuteMethod().getName()));
         }
 
-//        if()
+        pathParams = PlaceHolderKit.findPlaceHolderKeys(uriSb.toString());
+        if(pathParams != null && pathParams.size() > 0) {
+            havePathParam = true;
+        }
 
         uriSb.append(path.suffix());
+
+        this.uri = uriSb.toString();
 
     }
 

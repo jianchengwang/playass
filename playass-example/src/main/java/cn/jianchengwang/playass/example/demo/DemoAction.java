@@ -2,11 +2,11 @@ package cn.jianchengwang.playass.example.demo;
 
 
 import cn.jianchengwang.playass.core.mvc.action.IWorkAction;
-import cn.jianchengwang.playass.core.mvc.route.ActionConfig;
+import cn.jianchengwang.playass.core.mvc.annotation.action.Action;
 import cn.jianchengwang.playass.core.mvc.context.WebContext;
 import cn.jianchengwang.playass.core.mvc.context.wrapper.Rq;
 
-@ActionConfig("demo")
+@Action("demo")
 public class DemoAction implements IWorkAction {
 
     @Override
