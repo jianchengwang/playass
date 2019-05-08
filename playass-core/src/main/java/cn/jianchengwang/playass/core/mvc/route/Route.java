@@ -9,8 +9,8 @@ public class Route {
 
     public static final RouteNode ROUTE_ROOT = new RouteNode("/", 0);
 
-    public static void build(String uri, RouteInfo routeInfo) {
-        ROUTE_ROOT.build(routeInfo.getUri(), routeInfo);
+    public static void add(String uri, RouteInfo routeInfo) {
+        ROUTE_ROOT.build(uri, routeInfo);
     }
 
     public static RouteInfo match(String uri) {

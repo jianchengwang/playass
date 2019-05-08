@@ -28,7 +28,9 @@ public class RouteInfo {
         this.clazz = clazz;
         this.handler = handler;
 
-        StringBuilder uriSb = new StringBuilder(path.value()).append("/");
+        String pathStr = path.value();
+        if(!pathStr.startsWith("/")) pathStr = "/" + pathStr;
+        StringBuilder uriSb = new StringBuilder(pathStr).append("/");
 
         if(handler.getValue().length() > 0) {
             uriSb.append(handler.getValue());

@@ -31,28 +31,22 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
         );
 
         String uri = msg.uri();
-        if(uri.indexOf(".do") != -1) {
-            uri = uri.substring(0, msg.uri().indexOf(".do"));
+        if(uri.contains("?")) {
+            uri = uri.substring(0, msg.uri().indexOf("?"));
+        }
 
-            if(uri.indexOf("/") == 0) {
-                uri = uri.substring(1, uri.length());
-            }
+        RouteInfo routeInfo = Route.match(uri);
+        if(routeInfo != null) {
+            System.out.println("clazz:" + routeInfo.getClazz().getSimpleName());
+            System.out.println("handler method:" + routeInfo.getHandler().getExecuteMethod().getName());
+            System.out.println("pathParams:");
 
-            RouteInfo routeInfo = Route.match(uri);
-            if(routeInfo != null) {
-                System.out.println("clazz:" + routeInfo.getClazz().getSimpleName());
-                System.out.println("handler method:" + routeInfo.getHandler().getExecuteMethod().getName());
-                System.out.println("pathParams:");
+            routeInfo.getPathParamMap().forEach((k, v) -> {
+                System.out.println(k + ":" + v);
+            });
 
-                routeInfo.getPathParamMap().forEach((k, v) -> {
-                    System.out.println(k + ":" + v);
-                });
-
-                routeInfo.getHandler().getExecuteMethod().invoke(routeInfo.getClazz().newInstance(), 1);
-            } else {
-                WebContext.me().getRp().error("NOTFOUND");
-            }
-
+            Object[] fields = routeInfo.getHandler().getFieldList(WebContext.me().getRq().getParamMap());
+            routeInfo.getHandler().getExecuteMethod().invoke(routeInfo.getClazz().newInstance(), fields);
         } else {
             WebContext.me().getRp().error("NOTFOUND");
         }

@@ -27,6 +27,22 @@ public class DemoAction {
 
     }
 
+    @Action
+    public void test1(User user) throws Exception {
+
+        System.out.println("demo action execute .....");
+
+        Rq rq = WebContext.me().getRq();
+
+        System.out.println("name: " + user.getName());
+        System.out.println("age: " + user.getAge());
+
+        WebContext.me().getRp().json(user);
+
+        System.out.println("demo action execute done .....");
+
+    }
+
     @Action("test/{id}")
     public void testPath(Integer id) throws Exception {
         System.out.println("demo action testPath execute .....");

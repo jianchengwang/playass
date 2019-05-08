@@ -61,7 +61,7 @@ public class InitBootstrap {
                         }
 
                         if(isRoute) {
-                            Route.build(routeInfo.getUri(), routeInfo);
+                            Route.add(routeInfo.getUri(), routeInfo);
                         }
 
                     }

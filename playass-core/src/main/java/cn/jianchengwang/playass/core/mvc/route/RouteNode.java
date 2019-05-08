@@ -53,7 +53,7 @@ public class RouteNode {
                 this.pathNodeMap.get(path).routeInfo = routeInfo;
             }
 
-            return this;
+            return this.pathNodeMap.get(path);
 
         } else {
 
