@@ -36,4 +36,13 @@ public class ReflectKit {
 
         }
     }
+
+    public static Object invokeGetMethod(Class clazz, Field field, Object instance) throws Exception {
+
+        String methodName = "set" + StrKit.upperCase(field.getName());
+
+        Method method = clazz.getMethod(methodName, null);
+
+        return method.invoke(instance, null);
+    }
 }
