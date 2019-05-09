@@ -1,8 +1,10 @@
 package cn.jianchengwang.playass.core.mvc.route;
 
+import cn.jianchengwang.playass.core.kit.BeanKit;
 import cn.jianchengwang.playass.core.kit.ReflectKit;
 import cn.jianchengwang.playass.core.mvc.context.H;
 import cn.jianchengwang.playass.core.mvc.context.param.ParamMap;
+import cn.jianchengwang.playass.core.mvc.route.process.BeanProcess;
 import lombok.Data;
 
 import java.lang.reflect.Field;
@@ -75,14 +77,17 @@ public class Handler {
 
                 try {
                     Class clazz = Class.forName(v.getParameterizedType().getTypeName());
-                    Object instance = null;
-                    Field[] fields = clazz.getDeclaredFields();
-                    for(Field field: fields) {
-                        if(paramMap.containsKey(field.getName())) {
-                            if(instance == null) instance = clazz.newInstance();
-                            ReflectKit.invokeSetMethod(clazz, field, instance, paramMap.get(field.getName()));
-                        }
-                    }
+//                    Object instance = null;
+//                    Field[] fields = clazz.getDeclaredFields();
+//                    for(Field field: fields) {
+//                        if(paramMap.containsKey(field.getName())) {
+//                            if(instance == null) instance = clazz.newInstance();
+//                            ReflectKit.invokeSetMethod(clazz, field, instance, paramMap.get(field.getName()));
+//
+//                            BeanKit.callSetter(instance, field.getGenericType(), paramMap.get(field.getName()));
+//                        }
+//                    }
+                    Object instance = BeanProcess.toBean(paramMap, clazz);
                     fieldList.add(instance);
 
                 } catch (Exception e) {
