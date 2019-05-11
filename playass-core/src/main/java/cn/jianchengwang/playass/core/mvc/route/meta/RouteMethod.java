@@ -1,13 +1,15 @@
-package cn.jianchengwang.playass.core.mvc.route;
+package cn.jianchengwang.playass.core.mvc.route.meta;
 
-import cn.jianchengwang.playass.core.kit.BeanKit;
 import cn.jianchengwang.playass.core.kit.ReflectKit;
-import cn.jianchengwang.playass.core.mvc.context.H;
-import cn.jianchengwang.playass.core.mvc.context.param.ParamMap;
+import cn.jianchengwang.playass.core.mvc.annotation.Param;
+import cn.jianchengwang.playass.core.mvc.http.HttpMethod;
+import cn.jianchengwang.playass.core.mvc.WebContext;
+import cn.jianchengwang.playass.core.mvc.http.request.HttpReq;
+import cn.jianchengwang.playass.core.mvc.http.request.ParamMap;
+import cn.jianchengwang.playass.core.mvc.http.response.HttpResp;
 import cn.jianchengwang.playass.core.mvc.route.process.BeanProcess;
 import lombok.Data;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.LinkedHashMap;
@@ -16,15 +18,15 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-public class Handler {
+public class RouteMethod {
     String value;
-    H.Method[] allowHttpMethods;
+    HttpMethod[] allowHttpMethods;
 
     Method executeMethod;
 
     Map<String, Parameter> parameterMap = new LinkedHashMap<>();
 
-    public Handler(String value, H.Method[] allowHttpMethods, Method executeMethod) {
+    public RouteMethod(String value, HttpMethod[] allowHttpMethods, Method executeMethod) {
         this.value = value;
         this.allowHttpMethods = allowHttpMethods;
         this.executeMethod = executeMethod;
@@ -42,10 +44,19 @@ public class Handler {
 
         final List<Object> fieldList = new LinkedList<>();
         parameterMap.forEach((k, v) -> {
-            if(paramMap.containsKey(k)) {
-                System.out.println(v.getParameterizedType().getTypeName());
 
-                switch (v.getParameterizedType().getTypeName()) {
+            boolean isParam = false;
+            Param param = v.getAnnotation(Param.class);
+            if(param != null) {
+                k = param.value();
+                isParam = true;
+            }
+
+            String parameterTypeName = v.getParameterizedType().getTypeName();
+
+            if(paramMap.containsKey(k)) {
+
+                switch (parameterTypeName) {
                     case "java.lang.String":
                         fieldList.add(paramMap.getString(k));
                         break;
@@ -64,7 +75,6 @@ public class Handler {
                     case "java.lang.Boolean":
                         fieldList.add(paramMap.getBoolean(k));
                         break;
-
                     default:
 
                         fieldList.add(paramMap.get(k));
@@ -75,23 +85,30 @@ public class Handler {
 
             } else {
 
-                try {
-                    Class clazz = Class.forName(v.getParameterizedType().getTypeName());
-//                    Object instance = null;
-//                    Field[] fields = clazz.getDeclaredFields();
-//                    for(Field field: fields) {
-//                        if(paramMap.containsKey(field.getName())) {
-//                            if(instance == null) instance = clazz.newInstance();
-//                            ReflectKit.invokeSetMethod(clazz, field, instance, paramMap.get(field.getName()));
-//
-//                            BeanKit.callSetter(instance, field.getGenericType(), paramMap.get(field.getName()));
-//                        }
-//                    }
-                    Object instance = BeanProcess.toBean(paramMap, clazz);
-                    fieldList.add(instance);
+                if(!parameterTypeName.startsWith("java.lang.")) {
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    try {
+                        Class clazz = ReflectKit.getClass(parameterTypeName);
+
+                        if(clazz == HttpReq.class) {
+                            fieldList.add(WebContext.me().getHttpReq());
+                        } else if(clazz == HttpResp.class) {
+                            fieldList.add(WebContext.me().getHttpResp());
+                        } else {
+                            Object instance = BeanProcess.toBean(paramMap, clazz);
+                            fieldList.add(instance);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    if(isParam) {
+                        if(param.notBlank() || param.notNull()) {
+                            System.out.println("参数异常");
+                        }
+                    }
+                    fieldList.add(null);
                 }
 
             }

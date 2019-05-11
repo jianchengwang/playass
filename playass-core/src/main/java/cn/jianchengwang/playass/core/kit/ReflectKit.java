@@ -6,8 +6,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ReflectKit {
+
+    public final static Map<String, Class> CACHE_CLASS_MAP = new LinkedHashMap<>();
+
+    public static Class getClass(String className) throws Exception {
+        if(!CACHE_CLASS_MAP.containsKey(className)) {
+            CACHE_CLASS_MAP.put(className, Class.forName(className));
+        }
+
+        return CACHE_CLASS_MAP.get(className);
+    }
 
     public static void invokeSetMethod(Class clazz, Field field, Object instance, Object value) throws Exception {
 

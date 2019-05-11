@@ -1,8 +1,7 @@
 package cn.jianchengwang.playass.core.mvc.annotation.action;
 
-import cn.jianchengwang.playass.core.mvc.context.H;
+import cn.jianchengwang.playass.core.mvc.http.HttpMethod;
 
-import javax.xml.bind.Element;
 import java.lang.annotation.*;
 
 @Target({ElementType.TYPE, ElementType.METHOD})
@@ -12,5 +11,5 @@ import java.lang.annotation.*;
 public @interface Action {
     String value() default "";
 
-    H.Method[] method() default {H.Method.ALL};
+    HttpMethod[] method() default {HttpMethod.ALL};
 }

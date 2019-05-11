@@ -1,6 +1,7 @@
 package cn.jianchengwang.playass.core.mvc.route.process;
 
-import cn.jianchengwang.playass.core.mvc.context.param.ParamMap;
+import cn.jianchengwang.playass.core.kit.ReflectKit;
+import cn.jianchengwang.playass.core.mvc.http.request.ParamMap;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -112,17 +113,18 @@ public class BeanProcess {
                     ((Timestamp) value).setNanos(nanos);
                 }
             } else {
-                if (value instanceof String) {
-                    if(params[0].isEnum()) {
-                        value = Enum.valueOf(params[0].asSubclass(Enum.class), (String) value);
-                    }
+                if (value instanceof String && params[0].isEnum()) {
+                    value = Enum.valueOf(params[0].asSubclass(Enum.class), (String) value);
                 } else {
-                    String fsType =params[0].getSimpleName();
-                    Class<?> class1 = Class.forName(targetType);
-                    Method method = class1.getMethod("parse" + fixParse(fsType),String.class);
-                    if (method != null) {
-                        Object rec = method.invoke(null, value);
-                        value = rec;
+
+                    if(!"java.lang.String".equals(targetType)) {
+                        String fsType = params[0].getSimpleName();
+                        Class<?> class1 = ReflectKit.getClass(targetType);
+                        Method method = class1.getMethod("parse" + fixParse(fsType), String.class);
+                        if (method != null) {
+                            Object rec = method.invoke(null, value);
+                            value = rec;
+                        }
                     }
                 }
             }

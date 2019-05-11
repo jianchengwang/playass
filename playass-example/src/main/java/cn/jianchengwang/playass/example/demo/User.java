@@ -16,6 +16,12 @@ public class User {
         this.id = id;
     }
 
+    public User(Integer id,String name, Integer age) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+    }
+
     public User(String name, Integer age) {
         this.name = name;
         this.age = age;

@@ -1,59 +1,95 @@
 package cn.jianchengwang.playass.core.netty;
 
-import cn.jianchengwang.playass.core.mvc.context.WebContext;
-import cn.jianchengwang.playass.core.mvc.context.wrapper.Rp;
-import cn.jianchengwang.playass.core.mvc.context.wrapper.Rq;
-import cn.jianchengwang.playass.core.mvc.route.Route;
-import cn.jianchengwang.playass.core.mvc.route.RouteInfo;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
+import cn.jianchengwang.playass.core.mvc.WebContext;
+import cn.jianchengwang.playass.core.mvc.http.request.HttpReq;
+import cn.jianchengwang.playass.core.mvc.http.response.HttpResp;
+import cn.jianchengwang.playass.core.mvc.route.RouteMatcher;
+import cn.jianchengwang.playass.core.mvc.route.meta.Route;
+import cn.jianchengwang.playass.core.netty.handler.RouteMethodHandler;
+import cn.jianchengwang.playass.core.netty.handler.StaticFileHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpMethod;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-    private static final byte[] SUCCESS = { 'S', 'U', 'C', 'C', 'E', 'S', 'S' };
-    private static final byte[] NOTFOUND = { 'N', 'O', 'T', 'F', 'O', 'U', 'N', 'D' };
+    private final StaticFileHandler staticFileHandler = new StaticFileHandler();
+    private final RouteMethodHandler routeHandler = new RouteMethodHandler();
+
+
+    private final Set<String> notStaticUri = new HashSet<>(32);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest fullHttpRequest) throws Exception {
 
-        byte[] responseMsg = SUCCESS;
+        HttpReq httpReq = new HttpReq(fullHttpRequest);
 
-        System.out.println("uri:" + msg.uri());
-        System.out.println("method:" + msg.method().name());
-        System.out.println("headers:");msg.headers().forEach(h -> System.out.println(h));
+        CompletableFuture<HttpReq> future = CompletableFuture.completedFuture(httpReq);
 
-        WebContext.init(
-            new Rq(msg),
-            new Rp()
+        Executor executor = ctx.executor();
+
+        future.thenApplyAsync(req -> buildWebContext(ctx, fullHttpRequest), executor)
+                .thenApplyAsync(this::executeLogic, executor)
+                .thenApplyAsync(this::buildResponse, executor)
+                .thenAcceptAsync(msg -> writeResponse(ctx, future, msg), ctx.channel().eventLoop());
+
+    }
+
+    private WebContext buildWebContext(ChannelHandlerContext ctx,
+                                       FullHttpRequest fullHttpReq) {
+
+        String remoteAddress = ctx.channel().remoteAddress().toString();
+        return WebContext.create(new HttpReq(fullHttpReq, remoteAddress), new HttpResp(), ctx);
+    }
+
+    private WebContext executeLogic(WebContext webContext) {
+        try {
+            WebContext.set(webContext);
+            HttpReq httpReq = webContext.getHttpReq();
+            String method = httpReq.getNettyFullReq().method().name();
+            String uri = httpReq.getUri();
+
+            Route route = RouteMatcher.match(method, uri);
+            if (null != route) {
+                webContext.setRoute(route);
+            } else {
+                throw new Exception(uri);
+            }
+            routeHandler.handle(webContext);
+
+            return webContext;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+
+    private FullHttpResponse buildResponse(WebContext webContext) {
+        WebContext.set(webContext);
+        return routeHandler.handleResponse(
+                webContext.getHttpReq(), webContext.getHttpResp(),
+                webContext.getCtx()
         );
+    }
 
-        String uri = msg.uri();
-        if(uri.contains("?")) {
-            uri = uri.substring(0, msg.uri().indexOf("?"));
+    private boolean isStaticFile(String method, String uri) {
+        if (HttpMethod.POST.name().equals(method) || notStaticUri.contains(uri)) {
+            return false;
         }
+        return true;
+    }
 
-        RouteInfo routeInfo = Route.match(uri);
-        if(routeInfo != null) {
-            System.out.println("clazz:" + routeInfo.getClazz().getSimpleName());
-            System.out.println("handler method:" + routeInfo.getHandler().getExecuteMethod().getName());
-            System.out.println("pathParams:");
 
-            routeInfo.getPathParamMap().forEach((k, v) -> {
-                System.out.println(k + ":" + v);
-            });
-
-            Object[] fields = routeInfo.getHandler().getFieldList(WebContext.me().getRq().getParamMap());
-            routeInfo.getHandler().getExecuteMethod().invoke(routeInfo.getClazz().newInstance(), fields);
-        } else {
-            WebContext.me().getRp().error("NOTFOUND");
-        }
-
-        ChannelFuture f = ctx.writeAndFlush(WebContext.me().getRp().getRaw());
-        f.addListener(ChannelFutureListener.CLOSE);
-
+    private void writeResponse(ChannelHandlerContext ctx, CompletableFuture<HttpReq> future, FullHttpResponse msg) {
+        ctx.writeAndFlush(msg);
+        future.complete(null);
     }
 
     @Override

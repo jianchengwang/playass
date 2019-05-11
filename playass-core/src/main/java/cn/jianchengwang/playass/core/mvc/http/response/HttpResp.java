@@ -1,4 +1,4 @@
-package cn.jianchengwang.playass.core.mvc.context.wrapper;
+package cn.jianchengwang.playass.core.mvc.http.response;
 
 import cn.jianchengwang.playass.core.Const;
 import io.netty.buffer.Unpooled;
@@ -12,11 +12,11 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 @Data
-public class Rp {
+public class HttpResp {
 
     private FullHttpResponse raw;
 
-    public Rp() {
+    public HttpResp() {
 
     }
 

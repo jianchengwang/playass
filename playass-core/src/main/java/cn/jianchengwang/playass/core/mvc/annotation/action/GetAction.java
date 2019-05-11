@@ -1,6 +1,6 @@
 package cn.jianchengwang.playass.core.mvc.annotation.action;
 
-import cn.jianchengwang.playass.core.mvc.context.H;
+import cn.jianchengwang.playass.core.mvc.http.HttpMethod;
 
 import java.lang.annotation.*;
 
@@ -11,7 +11,7 @@ public @interface GetAction {
 
     String value() default "";
 
-    H.Method[] method() default {H.Method.GET};
+    HttpMethod[] method() default {HttpMethod.GET};
 
 }
 

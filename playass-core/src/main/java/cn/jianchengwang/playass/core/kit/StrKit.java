@@ -16,4 +16,8 @@ public class StrKit {
         return str == null || str.trim().length() == 0;
     }
 
+    public static String removeHeadTailChar(String str) {
+        return str.substring(1, str.length() - 1);
+    }
+
 }

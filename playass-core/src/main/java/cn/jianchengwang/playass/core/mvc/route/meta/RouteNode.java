@@ -1,11 +1,9 @@
-package cn.jianchengwang.playass.core.mvc.route;
+package cn.jianchengwang.playass.core.mvc.route.meta;
 
+import cn.jianchengwang.playass.core.kit.StrKit;
 import lombok.Data;
-import sun.awt.image.ImageWatched;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -15,7 +13,7 @@ public class RouteNode {
     private int deep;
     private boolean isParam;
 
-    private RouteInfo routeInfo;
+    private Route routeInfo;
     private Map<String, RouteNode> pathNodeMap;
 
     public RouteNode() {
@@ -30,7 +28,7 @@ public class RouteNode {
         }
     }
 
-    public void build(String uri, RouteInfo routeInfo) {
+    public void build(String uri, Route routeInfo) {
 
         String[] paths = uri.split("/");
 
@@ -40,7 +38,7 @@ public class RouteNode {
         }
     }
 
-    private RouteNode build(String path, int deep, boolean lastPath, RouteInfo routeInfo) {
+    private RouteNode build(String path, int deep, boolean lastPath, Route routeInfo) {
 
         path = path.trim();
         if(this.pathNodeMap == null) {
@@ -66,7 +64,7 @@ public class RouteNode {
         }
     }
 
-    public RouteInfo match(String uri) {
+    public Route match(String uri) {
 
         String[] paths = uri.split("/");
 
@@ -94,17 +92,15 @@ public class RouteNode {
             return this.pathNodeMap.get(path);
         }
 
-        final RouteNode[] routeNodes = {};
+        final RouteNode[] routeNodes = new RouteNode[1];
 
         this.pathNodeMap.forEach((k, v) -> {
             if(v.isParam) {
-                pathParamMap.put(k, path);
+                pathParamMap.put(StrKit.removeHeadTailChar(k), path);
                 routeNodes[0] = v;
             }
         });
-        if(routeNodes.length > 0) return routeNodes[0];
-
-        return null;
+        return routeNodes[0];
     }
 
 }

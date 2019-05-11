@@ -1,4 +1,4 @@
-package cn.jianchengwang.playass.core.mvc.context.param;
+package cn.jianchengwang.playass.core.mvc.http.request;
 
 public interface IParam {
 

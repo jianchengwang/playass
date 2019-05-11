@@ -1,13 +1,12 @@
 package cn.jianchengwang.playass.core.bootstrap;
 
 
-import cn.jianchengwang.playass.core.Const;
 import cn.jianchengwang.playass.core.mvc.annotation.Path;
 import cn.jianchengwang.playass.core.mvc.annotation.action.*;
 import cn.jianchengwang.playass.core.kit.PagKit;
-import cn.jianchengwang.playass.core.mvc.route.Handler;
-import cn.jianchengwang.playass.core.mvc.route.Route;
-import cn.jianchengwang.playass.core.mvc.route.RouteInfo;
+import cn.jianchengwang.playass.core.mvc.route.meta.RouteMethod;
+import cn.jianchengwang.playass.core.mvc.route.RouteMatcher;
+import cn.jianchengwang.playass.core.mvc.route.meta.Route;
 import lombok.Data;
 
 import java.lang.reflect.Method;
@@ -37,31 +36,31 @@ public class InitBootstrap {
                     Method[] methods = clazz.getMethods();
                     for(Method method: methods) {
 
-                        RouteInfo routeInfo = new RouteInfo();
+                        Route routeInfo = new Route();
                         Boolean isRoute = true;
 
                         if(method.isAnnotationPresent(Action.class)) {
                             Action action = (Action) method.getAnnotation(Action.class);
-                            routeInfo = new RouteInfo(path, clazz, new Handler(action.value(), action.method(), method));
+                            routeInfo = new Route(path, clazz, new RouteMethod(action.value(), action.method(), method));
                         }
                         else if(method.isAnnotationPresent(GetAction.class)) {
                             GetAction action = (GetAction) method.getAnnotation(GetAction.class);
-                            routeInfo = new RouteInfo(path, clazz, new Handler(action.value(), action.method(), method));
+                            routeInfo = new Route(path, clazz, new RouteMethod(action.value(), action.method(), method));
                         } else if(method.isAnnotationPresent(PostAction.class)) {
                             PostAction action = (PostAction) method.getAnnotation(PostAction.class);
-                            routeInfo = new RouteInfo(path, clazz, new Handler(action.value(), action.method(), method));
+                            routeInfo = new Route(path, clazz, new RouteMethod(action.value(), action.method(), method));
                         } else if(method.isAnnotationPresent(PutAction.class)) {
                             PutAction action = (PutAction) method.getAnnotation(PutAction.class);
-                            routeInfo = new RouteInfo(path, clazz, new Handler(action.value(), action.method(), method));
+                            routeInfo = new Route(path, clazz, new RouteMethod(action.value(), action.method(), method));
                         } else if(method.isAnnotationPresent(DeleteAction.class)) {
                             DeleteAction action = (DeleteAction) method.getAnnotation(DeleteAction.class);
-                            routeInfo = new RouteInfo(path, clazz, new Handler(action.value(), action.method(), method));
+                            routeInfo = new Route(path, clazz, new RouteMethod(action.value(), action.method(), method));
                         } else {
                             isRoute = false;
                         }
 
                         if(isRoute) {
-                            Route.add(routeInfo.getUri(), routeInfo);
+                            RouteMatcher.add(routeInfo.getUri(), routeInfo);
                         }
 
                     }
