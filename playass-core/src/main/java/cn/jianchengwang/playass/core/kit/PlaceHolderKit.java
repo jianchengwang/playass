@@ -1,11 +1,14 @@
 package cn.jianchengwang.playass.core.kit;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class PlaceHolderKit {
 
     private static final Pattern pattern = Pattern.compile("\\{(.*?)\\}");

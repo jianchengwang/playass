@@ -1,6 +1,6 @@
 package cn.jianchengwang.playass.core.mvc.route.process;
 
-import cn.jianchengwang.playass.core.kit.ReflectKit;
+import cn.jianchengwang.playass.core.kit.ClassKit;
 import cn.jianchengwang.playass.core.mvc.http.request.ParamMap;
 
 import java.beans.BeanInfo;
@@ -119,7 +119,7 @@ public class BeanProcess {
 
                     if(!"java.lang.String".equals(targetType)) {
                         String fsType = params[0].getSimpleName();
-                        Class<?> class1 = ReflectKit.getClass(targetType);
+                        Class<?> class1 = ClassKit.loadClass(targetType);
                         Method method = class1.getMethod("parse" + fixParse(fsType), String.class);
                         if (method != null) {
                             Object rec = method.invoke(null, value);

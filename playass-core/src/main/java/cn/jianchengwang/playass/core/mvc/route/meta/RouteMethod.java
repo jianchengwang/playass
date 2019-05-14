@@ -1,6 +1,6 @@
 package cn.jianchengwang.playass.core.mvc.route.meta;
 
-import cn.jianchengwang.playass.core.kit.ReflectKit;
+import cn.jianchengwang.playass.core.kit.ClassKit;
 import cn.jianchengwang.playass.core.mvc.annotation.Param;
 import cn.jianchengwang.playass.core.mvc.http.HttpMethod;
 import cn.jianchengwang.playass.core.mvc.WebContext;
@@ -88,7 +88,7 @@ public class RouteMethod {
                 if(!parameterTypeName.startsWith("java.lang.")) {
 
                     try {
-                        Class clazz = ReflectKit.getClass(parameterTypeName);
+                        Class clazz = ClassKit.loadClass(parameterTypeName);
 
                         if(clazz == HttpReq.class) {
                             fieldList.add(WebContext.me().getHttpReq());

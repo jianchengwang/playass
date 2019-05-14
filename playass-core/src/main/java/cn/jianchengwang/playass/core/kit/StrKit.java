@@ -1,5 +1,8 @@
 package cn.jianchengwang.playass.core.kit;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class StrKit {
 
     public static String upperCase(String name, int... index) {
@@ -13,7 +16,7 @@ public class StrKit {
     }
 
     public static boolean isEmpty(String str) {
-        return str == null || str.trim().length() == 0;
+        return str == null || "".equals(str);
     }
 
     public static String removeHeadTailChar(String str) {

@@ -149,7 +149,7 @@ public class PagKit {
         }
     }
     public static void main(String[] args) throws IOException {
-        Set findClasses = findClasses("cn.jianchengwang.todo.lib.netty.todo.web.demo");
+        Set findClasses = findClasses("cn.jianchengwang.playass.example.demo");
         System.out.println(".......................");
         for (Object string : findClasses) {
             System.out.println(string);

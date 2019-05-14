@@ -1,6 +1,7 @@
 package cn.jianchengwang.playass.core.bootstrap;
 
 
+import cn.jianchengwang.playass.core.kit.ClassKit;
 import cn.jianchengwang.playass.core.mvc.annotation.Path;
 import cn.jianchengwang.playass.core.mvc.annotation.action.*;
 import cn.jianchengwang.playass.core.kit.PagKit;
@@ -22,12 +23,10 @@ public class InitBootstrap {
 
     public void init() {
 
-        Set<String> clazzNameSet = PagKit.findClasses(pkgName);
-        clazzNameSet.forEach(clazzName -> {
+        Set<Class<?>> clazzSet = ClassKit.getPackageClass(pkgName);
+        clazzSet.forEach(clazz -> {
 
-            Class clazz = null;
             try {
-                clazz = Class.forName(clazzName);
 
                 if(clazz.isAnnotationPresent(Path.class)) {
 
@@ -66,7 +65,7 @@ public class InitBootstrap {
                     }
                 }
 
-            } catch (ClassNotFoundException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
