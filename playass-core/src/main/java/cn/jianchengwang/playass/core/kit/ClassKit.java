@@ -1,5 +1,6 @@
 package cn.jianchengwang.playass.core.kit;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -18,6 +19,7 @@ import java.util.jar.JarEntry;
 import java.util.stream.Collectors;
 
 @Slf4j
+@UtilityClass
 public class ClassKit {
 
     private static final String FILE_PROTOCOL = "file";

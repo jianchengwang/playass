@@ -4,6 +4,7 @@ import cn.jianchengwang.playass.core.aop.annotation.Aspect;
 import cn.jianchengwang.playass.core.ioc.annotation.Bean;
 import cn.jianchengwang.playass.core.ioc.annotation.Inject;
 import cn.jianchengwang.playass.core.kit.ClassKit;
+import cn.jianchengwang.playass.core.mvc.annotation.Path;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 public class BeanContainer {
 
     private boolean isLoadBean = false;
-    private static final List<Class<? extends Annotation>> BEAN_ANNOTATION = Arrays.asList(Bean.class, Inject.class, Aspect.class);
+    private static final List<Class<? extends Annotation>> BEAN_ANNOTATION = Arrays.asList(Path.class, Bean.class, Inject.class);
 
     private final Map<Class<?>, Object> beanMap = new ConcurrentHashMap<>();
 

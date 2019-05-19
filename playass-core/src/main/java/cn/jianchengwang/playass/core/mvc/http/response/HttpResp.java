@@ -1,6 +1,6 @@
 package cn.jianchengwang.playass.core.mvc.http.response;
 
-import cn.jianchengwang.playass.core.Const;
+import cn.jianchengwang.playass.core.mvc.Const;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;

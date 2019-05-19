@@ -10,11 +10,13 @@ import cn.jianchengwang.playass.core.mvc.route.meta.RouteMethod;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.ws.Response;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+@Slf4j
 public class RouteMethodHandler implements RequestHandler {
 
     @Override
