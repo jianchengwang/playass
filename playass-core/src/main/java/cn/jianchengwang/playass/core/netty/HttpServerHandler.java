@@ -1,5 +1,6 @@
 package cn.jianchengwang.playass.core.netty;
 
+import cn.jianchengwang.playass.core.mvc.Const;
 import cn.jianchengwang.playass.core.mvc.WebContext;
 import cn.jianchengwang.playass.core.mvc.http.request.HttpReq;
 import cn.jianchengwang.playass.core.mvc.http.response.HttpResp;
@@ -14,17 +15,17 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
+    private final Set<String> notStaticUri = new HashSet<>(32);
+
     private final StaticFileHandler staticFileHandler = new StaticFileHandler();
     private final RouteMethodHandler routeHandler = new RouteMethodHandler();
-
-
-    private final Set<String> notStaticUri = new HashSet<>(32);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest fullHttpRequest) throws Exception {
@@ -56,13 +57,17 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
             String method = httpReq.getNettyFullReq().method().name();
             String uri = httpReq.getUri();
 
-            Route route = RouteMatcher.match(method, uri);
-            if (null != route) {
-                webContext.setRoute(route);
+            if(isStaticFile(method, uri)) {
+                staticFileHandler.handle(webContext);
             } else {
-                throw new Exception(uri);
+                Route route = RouteMatcher.match(method, uri);
+                if (null != route) {
+                    webContext.setRoute(route);
+                } else {
+                    throw new Exception(uri);
+                }
+                routeHandler.handle(webContext);
             }
-            routeHandler.handle(webContext);
 
             return webContext;
         } catch (Exception e) {
@@ -79,14 +84,6 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
         );
     }
 
-    private boolean isStaticFile(String method, String uri) {
-        if (HttpMethod.POST.name().equals(method) || notStaticUri.contains(uri)) {
-            return false;
-        }
-        return true;
-    }
-
-
     private void writeResponse(ChannelHandlerContext ctx, CompletableFuture<HttpReq> future, FullHttpResponse msg) {
         ctx.writeAndFlush(msg);
         future.complete(null);
@@ -96,5 +93,20 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.close();
+    }
+
+    private boolean isStaticFile(String method, String uri) {
+        if (HttpMethod.POST.name().equals(method)) {
+            return false;
+        }
+
+        Optional<String> result = Const.DEFAULT_STATICS.stream()
+                .filter(s -> s.equals(uri) || uri.startsWith(s)).findFirst();
+
+        if (!result.isPresent()) {
+            notStaticUri.add(uri);
+            return false;
+        }
+        return true;
     }
 }

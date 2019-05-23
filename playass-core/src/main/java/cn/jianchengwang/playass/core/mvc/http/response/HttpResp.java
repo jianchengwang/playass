@@ -20,6 +20,10 @@ public class HttpResp {
 
     }
 
+    public HttpResp(FullHttpResponse raw) {
+        this.raw = raw;
+    }
+
     public void error(String errorMsg) {
         text(errorMsg);
     }
